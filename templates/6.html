@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Assistant</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f9fc; padding: 20px; }
+    .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h1 { text-align: center; }
+    select, textarea, button { width: 100%; margin-top: 10px; padding: 10px; }
+    #output { margin-top: 20px; background: #f1f1f1; padding: 15px; border-radius: 5px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 AI Assistant</h1>
+
+    <label for="function">Choose Function:</label>
+    <select id="function">
+      <option value="qna">Answer Question</option>
+      <option value="summary">Summarize Text</option>
+      <option value="story">Generate Creative Story</option>
+      <option value="advice">Give Advice</option>
+    </select>
+
+    <label for="input">Your Input:</label>
+    <textarea id="input" rows="4" placeholder="Type your question, text, or idea..."></textarea>
+
+    <button onclick="generate()">Generate</button>
+
+    <div id="output"></div>
+
+    <div id="feedback" style="display:none;">
+      <p>Was this response helpful?</p>
+      <button onclick="sendFeedback('yes')">👍 Yes</button>
+      <button onclick="sendFeedback('no')">👎 No</button>
+    </div>
+  </div>
+
+  <script>
+    async function generate() {
+      const func = document.getElementById("function").value;
+      const input = document.getElementById("input").value;
+      document.getElementById("output").innerText = "Generating response...";
+
+      const response = await fetch("http://127.0.0.1:5000/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ function: func, input: input })
+      });
+
+      const data = await response.json();
+      document.getElementById("output").innerText = data.response || "Error!";
+      document.getElementById("feedback").style.display = "block";
+    }
+
+    function sendFeedback(value) {
+      alert("Thanks for your feedback: " + value);
+    }
+  </script>
+</body>
+</html>
